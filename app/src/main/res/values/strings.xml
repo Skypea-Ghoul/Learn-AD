@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Hero API</string>
+    <string name="create">Create</string>
+    <string name="read">Read</string>
+    <string name="read_all">Read All</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+</resources>
