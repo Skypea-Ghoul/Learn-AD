@@ -34,13 +34,19 @@ class ReadAllHeroActivity : AppCompatActivity() {
     }
 
     private fun getAllHeroes(){
+        val sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("token", null)
+        if(token.isNullOrEmpty()){
+            showToast("Token Is Null Or Empty")
+            return
+        }
         val api = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(APIinterface::class.java)
 
-        val retrofitData = api.getHeroes()
+        val retrofitData = api.getHeroes("Bearer $token")
 
         retrofitData.enqueue(object : Callback<List<MyHeroesItem>?> {
             override fun onResponse(

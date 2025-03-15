@@ -5,18 +5,20 @@ import retrofit2.http.*
 
 interface APIinterface {
     @GET("heroes")
-    fun getHeroes(): Call<List<MyHeroesItem>>
+    fun getHeroes(@Header("Authorization") token: String): Call<List<MyHeroesItem>>
 
     @POST("heroes")
-    fun createHero(@Body hero: MyHeroesItem): Call<MyHeroesItem>
+    fun createHero(@Header("Authorization") token: String, @Body hero: MyHeroesItem): Call<MyHeroesItem>
 
     @PUT("heroes/{id}")
-    fun updateHero(@Path("id") id: Int, @Body hero: MyHeroesItem): Call<MyHeroesItem>
+    fun updateHero(@Header("Authorization") token: String, @Path("id") id: Int, @Body hero: MyHeroesItem): Call<MyHeroesItem>
 
     @DELETE("heroes/{id}")
-    fun deleteHero(@Path("id") id: Int): Call<Void>
+    fun deleteHero(@Header("Authorization") token: String, @Path("id") id: Int): Call<Void>
 
     @GET("heroes/{id}")
-    fun getHero(@Path("id") id: Int): Call<MyHeroesItem>
+    fun getHero(@Header("Authorization") token: String, @Path("id") id: Int): Call<MyHeroesItem>
 
+    @POST("token")
+    fun getToken(@Body form: Map<String, String>): Call<Map<String, String>>
 }

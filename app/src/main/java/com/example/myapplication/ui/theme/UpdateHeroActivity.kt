@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.theme
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -25,9 +26,19 @@ class UpdateHeroActivity : AppCompatActivity() {
             val secretName = findViewById<EditText>(R.id.etSecretName).text.toString()
             updateHero(id, name, age, secretName)
         }
+
+        findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            finish()
+        }
     }
 
     private fun updateHero(id: Int, name: String, age: Int, secretName: String) {
+        val sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("token", null)
+        if (token.isNullOrEmpty()) {
+            showToast("Token Is Null Or Empty")
+            return
+        }
         val api = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -35,13 +46,16 @@ class UpdateHeroActivity : AppCompatActivity() {
             .create(APIinterface::class.java)
 
         val updatedHero = MyHeroesItem(id = id, name = name, age = age, secret_name = secretName)
-        val retrofitData = api.updateHero(id, updatedHero)
+        val retrofitData = api.updateHero("Bearer $token", id, updatedHero)
 
         retrofitData.enqueue(object : Callback<MyHeroesItem?> {
             override fun onResponse(call: Call<MyHeroesItem?>, response: Response<MyHeroesItem?>) {
                 if (response.isSuccessful) {
-                    showToast("Hero updated successfully")
-                    finish()
+                    runOnUiThread{
+                        Toast.makeText(this@UpdateHeroActivity, "Hero updated successfully", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@UpdateHeroActivity, MainActivity::class.java))
+                        finish()
+                    }
                 } else {
                     showToast("Error: ${response.errorBody()}")
                 }
